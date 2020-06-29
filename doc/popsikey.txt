@@ -79,6 +79,9 @@ popsikey#register({prefix}, {maps}, {opts})
                     \ col: 'cursor',
                     \ }
 <
+		*Error	do not override filter or callback
+                Doing so will break the menu's key-hanlder
+
                 Once registered, the prefix key triggers a popup-menu. You
                 navigate it with |j| and |k|. `q` will quit, as will <Esc>.
                 <Enter> or <CR> accepts the item under the cursor, triggering
