@@ -100,7 +100,7 @@ popsikey#register({prefix}, {maps}, {opts})
                 key-strokes or function calls where possible.
 
                 Note that only normal-mode mappings are supported at this
-                time.
+                time. Also, no |<expr>| or other modifiers on mappings.
 
                 Returns an id suitable for |popsikey#extend|.
 
