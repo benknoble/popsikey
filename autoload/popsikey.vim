@@ -70,8 +70,7 @@ function s:do_popup(id) abort
   const l:choices =
         \ deepcopy(l:group.maps)
         \ ->map({i,v -> printf("%s\t%s", v.key, v.info)})
-  const l:highlight = get(l:group, 'highlight', 'Search')
-  execute 'highlight link PopupSelected' l:highlight
+  highlight link PopupSelected Search
   const l:opts = extend(#{
         \ filter: 'popsikey#filter',
         \ callback: 'popsikey#callback',
