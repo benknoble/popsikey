@@ -1,0 +1,145 @@
+*popsikey.txt*       For Vim version 8.0+        Last change: 2020 June 21
+*popsikey*
+
+                  ____ ____ ____ ____ ____ ____ ____ ____ ~
+                  ||P |||O |||P |||S |||I |||K |||E |||Y ||~
+                  ||__|||__|||__|||__|||__|||__|||__|||__||~
+                  |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|~
+
+==============================================================================
+
+INTRO                                                         *popsikey-intro*
+
+If you have lots of vim mappings that relate to the same subject, you may have
+"namespaced" them by using a prefix.
+
+As an example, suppose all of your git mappings start with `<leader>g`:
+    - `<leader>gg` is |:Gstatus|
+    - `<leader>gc` is |:Gcommit|
+
+popsikey provides an interface to automatically turn those mappings into a popup
+menu when it's supported. With our example mappings, you would create this by
+doing >
+    call popsikey#register('<leader>g', [
+            \ #{key: 'g', info: 'status', action: ":Gstatus\<CR>", flags: 'n'},
+            \ #{key: 'c', info: 'commit', action: ":Gcommit\<CR>", flags: 'n'},
+            \ ],
+            \ {})
+<
+
+So, `<leader>g` pops up the menu of git mappings, which is a list of map keys
+and descriptions. You navigate with the usual keys (|j|, |k|, `q`, <Esc>,
+<Enter>).  But your mappings work--so  pressing `g` inside the
+popup will trigger |:Gstatus| as a shortcut to navigating the menu.
+
+And, if your vim doesn't support popups yet, you'll get regular old mappings:
+>
+    nnoremap <leader>gg :Gstatus<CR>
+    nnoremap <leader>gc :Gcommit<CR>
+<
+That means the experience is seamless everywhere.
+
+==============================================================================
+
+USAGE                                                         *popsikey-usage*
+
+Install it with your favorite plugin manager and then take advantage of the
+capabilities described in |popsikey-functions|.
+
+==============================================================================
+
+FUNCTIONS                                                  *popsikey-functions*
+
+                                                           *popsikey#register*
+popsikey#register({prefix}, {maps}, {opts})
+                Register a set of prefixed normal-mode mappings under
+                `prefix`. The mappings are described by `maps`, a list of
+                dictionaries with the keys
+                    - `key`: the key on which to trigger the mapping (without
+                      the prefix)
+                    - `info`: a short description of the action for this
+                      mapping
+                    - `action`: the action to take (this will be fed to
+                      `feedkeys`, so you may need double-quotes and
+                      backslash-escapes on special characters like <CR>)
+                    - `flags`: a string of |feedkeys()| flags. If `flags`
+                      would cause keys not be mapped by |feedkeys()| and
+                      popups are unavailable, the created mappings are
+                      non-recursive.  Otherwise, the mappings are recursive.
+
+                `opts` is fed to |popup_create| (see also
+                |popup_create-arguments|). Merged with a default containing >
+                    #{
+                    \ filter: 'popsikey#filter',
+                    \ callback: 'popsikey#callback',
+                    \ title: prefix,
+                    \ padding: [1,2,1,2],
+                    \ pos: 'topleft',
+                    \ line: 'cursor+1',
+                    \ col: 'cursor',
+                    \ }
+<
+                Once registered, the prefix key triggers a popup-menu. You
+                navigate it with |j| and |k|. `q` will quit, as will <Esc>.
+                <Enter> or <CR> accepts the item under the cursor, triggering
+                its action. Pressing a key in (as defined in `maps`) will
+                also trigger the associated action.
+
+                Without |+popupwin|, normal-mode mappings are created that
+                mimic the popup (without flashing the popup). So `prefix`
+                followed by a `key` (from `maps`) will still work. The value
+                of `flags` determines whether or not the mapping is recursive.
+
+                Note that the action string is passed to |:execute|, which
+                runs a |:map| command (and should be compatible with
+                |feedkeys()|), so there is a fair bit of string-escaping and
+                interpreting going on. I advice sticking to normal-mode
+                key-strokes or function calls where possible.
+
+                Note that only normal-mode mappings are supported at this
+                time.
+
+                Returns an id suitable for |popsikey#extend|.
+
+                                                             *popsikey#extend*
+popsikey#extend({id}, {maps}, {opts})
+                Extends the mappings/menu defined by `id` (the return value of
+                |popsikey#register|, also viewable in `g:popsikey`). Done by
+                calling |extend()| with the "force" method.
+
+                This function can be used to define a base-set of mappings on
+                the menu, and then add to it with custom logic later on, if
+                you save the id returned on registration.
+
+==============================================================================
+
+LICENSE                                                     *popsikey-license*
+
+MIT. Copyright © 2020 D. Ben Knoble
+Full text available at
+https://github.com/benknoble/popsikey/blob/master/LICENSE
+
+BUGS                                                           *popsikey-bugs*
+
+At the time of this writing, no major bugs have been found.
+
+If you find one and wish to report it, you can do so at
+https://github.com/benknoble/popsikey/issues
+
+CONTRIBUTING                                           *popsikey-contributing*
+
+Want to submit a new feature, bugfix, or hack on popsikey?
+Submit pull requests to
+https://github.com/benknoble/popsikey/pulls
+
+Existing code determines style guidelines.
+
+CREDITS                                                     *popsikey-credits*
+
+Maintained by:
+- D. Ben Knoble (https://github.com/benkoble)
+
+Git repository:
+https://github.com/benknoble/popsikey
+
+vim:tw=78:ts=8:ft=help:norl:
