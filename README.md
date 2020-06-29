@@ -25,9 +25,9 @@ doing
             \ {})
 
 So, `<leader>g` pops up the menu of git mappings, which is a list of map keys
-and descriptions. You navigate with the usual keys (`j`, `k`, `q`, `<Esc>`,
-`<Enter>`).  But your mappings work--so  pressing `g` inside the
-popup will trigger `:Gstatus` as a shortcut to navigating the menu.
+and descriptions. You navigate with the usual keys (`j`, `k`, `<Esc>`,
+`<Enter>`).  But your mappings work--so  pressing `g` inside the popup will
+trigger `:Gstatus` as a shortcut to navigating the menu.
 
 And, if your vim doesn't support popups yet, you'll get regular old mappings:
 

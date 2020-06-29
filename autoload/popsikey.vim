@@ -39,10 +39,7 @@ endfunction
 
 function popsikey#filter(id, key) abort
   const l:group = g:popsikey[s:popsikey_id]
-  if a:key is? 'q'
-    call popup_close(a:id, -1)
-    return v:true
-  elseif index(l:group.keys, a:key) >= 0
+  if index(l:group.keys, a:key) >= 0
     call popup_close(a:id, a:key)
     return v:true
   else

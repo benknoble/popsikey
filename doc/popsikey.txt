@@ -28,9 +28,9 @@ doing >
 <
 
 So, `<leader>g` pops up the menu of git mappings, which is a list of map keys
-and descriptions. You navigate with the usual keys (|j|, |k|, `q`, <Esc>,
-<Enter>).  But your mappings work--so  pressing `g` inside the
-popup will trigger |:Gstatus| as a shortcut to navigating the menu.
+and descriptions. You navigate with the usual keys (|j|, |k|, <Esc>, <Enter>).
+But your mappings work--so  pressing `g` inside the popup will trigger
+|:Gstatus| as a shortcut to navigating the menu.
 
 And, if your vim doesn't support popups yet, you'll get regular old mappings:
 >
@@ -83,10 +83,10 @@ popsikey#register({prefix}, {maps}, {opts})
                 Doing so will break the menu's key-hanlder
 
                 Once registered, the prefix key triggers a popup-menu. You
-                navigate it with |j| and |k|. `q` will quit, as will <Esc>.
-                <Enter> or <CR> accepts the item under the cursor, triggering
-                its action. Pressing a key in (as defined in `maps`) will
-                also trigger the associated action.
+                navigate it with |j| and |k|. <Esc> will quit. <Enter> or
+                <CR> accepts the item under the cursor, triggering its action.
+                Pressing a key in (as defined in `maps`) will also trigger the
+                associated action.
 
                 Without |+popupwin|, normal-mode mappings are created that
                 mimic the popup (without flashing the popup). So `prefix`
