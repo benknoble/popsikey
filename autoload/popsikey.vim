@@ -1,10 +1,12 @@
 function popsikey#register(prefix, maps, opts) abort
   let g:popsikey = get(g:, 'popsikey', {})
+  const l:extended_maps = deepcopy(a:maps)
+        \ ->map({_, m -> extend(#{flags: 'n'}, m)})
 
   const l:id = s:get_id()
   let g:popsikey[l:id] = #{
         \ prefix: a:prefix,
-        \ maps: deepcopy(a:maps),
+        \ maps: l:extended_maps,
         \ opts: deepcopy(a:opts),
         \ keys: deepcopy(a:maps)->map({_, v -> v.key}),
         \ }

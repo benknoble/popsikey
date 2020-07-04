@@ -65,7 +65,8 @@ popsikey#register({prefix}, {maps}, {opts})
                     - `flags`: a string of |feedkeys()| flags. If `flags`
                       would cause keys not be mapped by |feedkeys()| and
                       popups are unavailable, the created mappings are
-                      non-recursive.  Otherwise, the mappings are recursive.
+                      non-recursive. Otherwise, the mappings are recursive.
+                      Default: 'n'
 
                 `opts` is fed to |popup_create| (see also
                 |popup_create-arguments|). Merged with a default containing >
