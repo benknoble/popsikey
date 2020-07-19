@@ -36,7 +36,8 @@ And, if your vim doesn't support popups yet, you'll get regular old mappings:
 
 That means the experience is seamless everywhere.
 
-**Note** only normal-mode mappings are currently supported.
+**Note** only global normal-mode mappings, without modifiers, are currently
+supported.
 
 ## How do I use it?
 

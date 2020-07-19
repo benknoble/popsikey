@@ -87,7 +87,9 @@ popsikey#register({prefix}, {maps}, {opts})
                 navigate it with |j| and |k|. <Esc> will quit. <Enter> or
                 <CR> accepts the item under the cursor, triggering its action.
                 Pressing a key in (as defined in `maps`) will also trigger the
-                associated action.
+                associated action. `maps` can use |j|, |k|, and the other
+                navigation keys as triggers, but you lose the ability to move
+                around in the popup.
 
                 Without |+popupwin|, normal-mode mappings are created that
                 mimic the popup (without flashing the popup). So `prefix`
@@ -97,11 +99,12 @@ popsikey#register({prefix}, {maps}, {opts})
                 Note that the action string is passed to |:execute|, which
                 runs a |:map| command (and should be compatible with
                 |feedkeys()|), so there is a fair bit of string-escaping and
-                interpreting going on. I advice sticking to normal-mode
+                interpreting going on. I advise sticking to normal-mode
                 key-strokes or function calls where possible.
 
-                Note that only normal-mode mappings are supported at this
-                time. Also, no |<expr>| or other modifiers on mappings.
+                Note that only global normal-mode mappings are supported at
+                this time. Also, no |<expr>| or other modifiers on mappings
+                are supported.
 
                 Returns an id suitable for |popsikey#extend|.
 
