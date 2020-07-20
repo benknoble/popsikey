@@ -35,7 +35,7 @@ function popsikey#extend(id, maps, opts) abort
     const l:group = g:popsikey[a:id]
     const l:extended_maps = deepcopy(a:maps)
           \ ->map({_, m -> extend(#{flags: 'n'}, m)})
-    call extend(l:group.maps, a:extended_maps)
+    call extend(l:group.maps, l:extended_maps)
     call extend(l:group.opts, a:opts)
     let l:group.keys = deepcopy(l:group.maps)->map({_, v -> v.key})
   endif
