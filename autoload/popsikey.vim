@@ -1,6 +1,6 @@
 function popsikey#register(prefix, maps, opts) abort
   let g:popsikey = get(g:, 'popsikey', {})
-  const l:extended_maps = deepcopy(a:maps)
+  let l:extended_maps = deepcopy(a:maps)
         \ ->map({_, m -> extend(#{flags: 'n'}, m)})
 
   const l:id = s:get_id()
