@@ -59,17 +59,16 @@ popsikey#register({prefix}, {maps}, {opts})
                       the prefix)
                     - `info`: a short description of the action for this
                       mapping
-                    - `action`: the action to take (this will be fed to
-                      `feedkeys`, so you may need double-quotes and
-                      backslash-escapes on special characters like <CR>)
+                    - `action`: the action to take (|popsikey-action|)
                     - `flags`: a string of |feedkeys()| flags. If `flags`
                       would cause keys not be mapped by |feedkeys()| and
                       popups are unavailable, the created mappings are
                       non-recursive. Otherwise, the mappings are recursive.
                       Default: 'n'
 
-                `opts` is fed to |popup_create| (see also
-                |popup_create-arguments|). Merged with a default containing >
+                With |+popupwin|, `opts` will be fed to |popup_create| when
+                the popup is triggered (see also |popup_create-arguments|).
+                Merged with a default containing >
                     #{
                     \ filter: 'popsikey#filter',
                     \ callback: 'popsikey#callback',
@@ -83,9 +82,11 @@ popsikey#register({prefix}, {maps}, {opts})
 		*Error	do not override filter or callback
                 Doing so will break the menu's key-hanlder
 
-                Once registered, the prefix key triggers a popup-menu. You
-                navigate it with |j| and |k|. <Esc> will quit. <Enter> or
-                <CR> accepts the item under the cursor, triggering its action.
+                Without |+popupwin|, `opts` is ignored.
+
+                With |+popupwin|, the prefix key triggers a popup-menu. You
+                navigate it with |j| and |k|. <Esc> will quit. <Enter> or <CR>
+                accepts the item under the cursor, triggering its action.
                 Pressing a key in (as defined in `maps`) will also trigger the
                 associated action. `maps` can use |j|, |k|, and the other
                 navigation keys as triggers, but you lose the ability to move
@@ -96,15 +97,9 @@ popsikey#register({prefix}, {maps}, {opts})
                 followed by a `key` (from `maps`) will still work. The value
                 of `flags` determines whether or not the mapping is recursive.
 
-                Note that the action string is passed to |:execute|, which
-                runs a |:map| command (and should be compatible with
-                |feedkeys()|), so there is a fair bit of string-escaping and
-                interpreting going on. I advise sticking to normal-mode
-                key-strokes or function calls where possible.
-
-                Note that only global normal-mode mappings are supported at
-                this time. Also, no |<expr>| or other modifiers on mappings
-                are supported.
+                Note that, with or without |+popupwin|, only global
+                normal-mode mappings are supported at this time. Also, no
+                |<expr>| or other modifiers on mappings are supported.
 
                 Returns an id suitable for |popsikey#extend|.
 
@@ -117,6 +112,38 @@ popsikey#extend({id}, {maps}, {opts})
                 This function can be used to define a base-set of mappings on
                 the menu, and then add to it with custom logic later on, if
                 you save the id returned on registration.
+
+                With |+popupwin|, the `maps` are added to the popup.
+
+                Without |+popupwin|, the normal-mode mappings are extended.
+
+------------------------------------------------------------------------------
+                                                             *popsikey-action*
+
+Popsikey actions currently take one of two forms:
+
+- string (`type(action) is# v:t_string`)
+
+    With |+popupwin|, this will be fed to |feedkeys| when the item is
+    selected, so you may need double-quotes and backslash-escapes on special
+    characters like <CR>.
+
+    Without |+popupwin|, the action string is passed to |:execute|, which runs
+    a |:map| command (and should be compatible with |feedkeys|), so there is
+    a fair bit of string-escaping and interpreting going on. I advise sticking
+    to normal-mode key-strokes or function calls where possible. The <bar>
+    literal (`|`) will be escaped automatically in this mode, as it works for
+    |feedkeys| but not |:execute|.
+
+- id (`type(action) is# v:t_number`)
+
+    With |+popupwin| this creates a "sub-popup"---that is, pressing the key
+    for the corresponding action will close the current popup and open the one
+    corresponding to `id`.
+
+    Without |+popupwin|, the items from the group corresponding to `id` are
+    added as mappings prefixed with the current prefix (not the prefix
+    they were originally defined with).
 
 ==============================================================================
 

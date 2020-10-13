@@ -13,20 +13,36 @@ function popsikey#register(prefix, maps, opts) abort
 
   " create mappings
   if has('popupwin')
-    execute printf('nnoremap %s :call <SID>do_popup(%d)<CR>',
-          \ a:prefix, l:id)
-    return l:id
+    execute printf('nnoremap %s :call <SID>do_popup(%d)<CR>', a:prefix, l:id)
   else
-    for l:item in a:maps
-      const l:flags = split(l:item.flags, '\zs')
-      const l:n_loc = index(l:flags, 'n')
-      const l:m_loc = index(l:flags, 'm')
-      const l:noremap = l:n_loc >= 0 ? l:n_loc > l:m_loc : v:false
-      execute printf('n%smap %s%s %s',
-            \ l:noremap ? 'nore' : '',
-            \ a:prefix, l:item.key, l:item.action)
+    call s:make_all_maps('', l:id)
+  endif
+  return l:id
+endfunction
+
+function s:make_all_maps(prefix, id) abort
+  if has_key(g:popsikey, a:id)
+    const l:group = g:popsikey[a:id]
+    for l:item in l:group.maps
+      let l:flags = split(l:item.flags, '\zs')
+      let l:n_loc = index(l:flags, 'n')
+      let l:m_loc = index(l:flags, 'm')
+      let l:noremap = l:n_loc >= 0 ? l:n_loc > l:m_loc : v:false
+      let l:key_seq =
+            \ empty(a:prefix)
+            \ ? l:group.prefix .. l:item.key
+            \ : a:prefix .. l:item.key
+      if type(l:item.action) is# v:t_string
+        execute printf('n%smap %s %s',
+              \ l:noremap ? 'nore' : '',
+              \ l:key_seq,
+              \ escape(l:item.action, '|'))
+      elseif type(l:item.action) is# v:t_number
+        call s:make_all_maps(l:key_seq, l:item.action)
+      else
+        echomsg 'popsikey: action type' type(l:item.action) 'in action "' l:item.action '" not supported'
+      endif
     endfor
-    return 0
   endif
 endfunction
 
@@ -38,6 +54,10 @@ function popsikey#extend(id, maps, opts) abort
     call extend(l:group.maps, l:extended_maps)
     call extend(l:group.opts, a:opts)
     let l:group.keys = deepcopy(l:group.maps)->map({_, v -> v.key})
+    if !has('popupwin')
+      call s:make_all_maps('', a:id)
+      return
+    endif
   endif
 endfunction
 
@@ -54,14 +74,18 @@ endfunction
 function popsikey#callback(id, result) abort
   const l:id = s:popsikey_id
   let s:popsikey_id = 0
-  if a:result == -1
-    return
-  else
+  if a:result isnot# -1
     const l:group = g:popsikey[l:id]
     const l:key_index = index(l:group.keys, a:result)
     const l:index = l:key_index >= 0 ? l:key_index : (a:result - 1)
     const l:item = l:group.maps[index]
-    call feedkeys(l:item.action, l:item.flags)
+    if type(l:item.action) is# v:t_string
+      call feedkeys(l:item.action, l:item.flags)
+    elseif type(l:item.action) is# v:t_number
+      call s:do_popup(l:item.action)
+    else
+        echomsg 'popsikey: action type' type(l:item.action) 'in action "' l:item.action '" not supported'
+    endif
   endif
 endfunction
 
