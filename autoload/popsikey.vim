@@ -94,7 +94,7 @@ function s:do_popup(id) abort
   const l:group = g:popsikey[s:popsikey_id]
   const l:choices =
         \ deepcopy(l:group.maps)
-        \ ->map({i,v -> printf("%s\t%s", v.key, v.info)})
+        \ ->map({i,v -> printf("%s\t%s", v.key, type(v.info) == v:t_func ? call(v.info, []) : v.info )})
   highlight link PopupSelected Search
   const l:opts = extend(#{
         \ filter: 'popsikey#filter',
