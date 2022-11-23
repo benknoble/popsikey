@@ -58,7 +58,8 @@ popsikey#register({prefix}, {maps}, {opts})
                     - `key`: the key on which to trigger the mapping (without
                       the prefix)
                     - `info`: a short description of the action for this
-                      mapping
+                      mapping; this can be a |Funcref| returning a string for
+                      dynamic descriptions.
                     - `action`: the action to take (|popsikey-action|)
                     - `flags`: a string of |feedkeys()| flags. If `flags`
                       would cause keys not be mapped by |feedkeys()| and
@@ -79,8 +80,8 @@ popsikey#register({prefix}, {maps}, {opts})
                     \ col: 'cursor',
                     \ }
 <
-		*Error	do not override filter or callback
-                Doing so will break the menu's key-hanlder
+		WARNING: do not override filter or callback; doing so will
+		break the menu's key-handler.
 
                 Without |+popupwin|, `opts` is ignored.
 
