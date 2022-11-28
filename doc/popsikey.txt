@@ -26,7 +26,6 @@ doing >
             \ ],
             \ {})
 <
-
 So, `<leader>g` pops up the menu of git mappings, which is a list of map keys
 and descriptions. You navigate with the usual keys (|j|, |k|, <Esc>, <Enter>).
 But your mappings work--so  pressing `g` inside the popup will trigger
@@ -59,7 +58,8 @@ popsikey#register({prefix}, {maps}, {opts})
                       the prefix)
                     - `info`: a short description of the action for this
                       mapping; this can be a |Funcref| returning a string for
-                      dynamic descriptions.
+                      dynamic descriptions; the item will be skipped if it
+                      returns an empty string.
                     - `action`: the action to take (|popsikey-action|)
                     - `flags`: a string of |feedkeys()| flags. If `flags`
                       would cause keys not be mapped by |feedkeys()| and
@@ -121,7 +121,7 @@ popsikey#extend({id}, {maps}, {opts})
 ------------------------------------------------------------------------------
                                                              *popsikey-action*
 
-Popsikey actions currently take one of two forms:
+Popsikey actions currently take one of three forms:
 
 - string (`type(action) is# v:t_string`)
 
@@ -135,6 +135,11 @@ Popsikey actions currently take one of two forms:
     to normal-mode key-strokes or function calls where possible. The <bar>
     literal (`|`) will be escaped automatically in this mode, as it works for
     |feedkeys| but not |:execute|.
+
+- no value (or `type(action) is# v:none`)
+
+    The prefix key and key for the selected item will fed through
+    |feedkeys()|.
 
 - id (`type(action) is# v:t_number`)
 
