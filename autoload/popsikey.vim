@@ -79,12 +79,15 @@ function popsikey#callback(id, result) abort
     const l:key_index = index(l:group.keys, a:result)
     const l:index = l:key_index >= 0 ? l:key_index : (a:result - 1)
     const l:item = l:group.maps[index]
-    if type(l:item.action) is# v:t_string
-      call feedkeys(l:item.action, l:item.flags)
-    elseif type(l:item.action) is# v:t_number
-      call s:do_popup(l:item.action)
+    const l:action = get(l:item, 'action', v:none)
+    if l:action is v:none
+      call feedkeys(l:group.prefix .. l:item.key, l:item.flags)
+    elseif type(l:action) is# v:t_string
+      call feedkeys(l:action, l:item.flags)
+    elseif type(l:action) is# v:t_number
+      call s:do_popup(l:action)
     else
-        echomsg 'popsikey: action type' type(l:item.action) 'in action "' l:item.action '" not supported'
+        echomsg 'popsikey: action type' type(l:action) 'in action "' l:action '" not supported'
     endif
   endif
 endfunction
@@ -92,9 +95,13 @@ endfunction
 function s:do_popup(id) abort
   let s:popsikey_id = a:id
   const l:group = g:popsikey[s:popsikey_id]
-  const l:choices =
-        \ deepcopy(l:group.maps)
-        \ ->map({i,v -> printf("%s\t%s", v.key, type(v.info) == v:t_func ? call(v.info, []) : v.info )})
+  let l:choices = []
+  for v in l:group.maps
+	let l:info = type(v.info) == v:t_func ? call(v.info, []) : v.info
+	if l:info != ''
+		call add(l:choices, printf("%s\t%s", l:v.key, l:info))
+	endif
+  endfor
   highlight link PopupSelected Search
   const l:opts = extend(#{
         \ filter: 'popsikey#filter',
